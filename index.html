@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>السنتر الذكي - النسخة الفائقة السرعة</title>
+    <!-- Tailwind CSS (Fast Caching) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body { font-family: system-ui, -apple-system, sans-serif; background-color: #f8fafc; -webkit-tap-highlight-color: transparent; }
+        input, select, textarea { font-size: 16px !important; }
+        .hidden-view { display: none !important; }
+    </style>
+</head>
+<body class="text-slate-800">
+
+    <!-- Header -->
+    <header class="bg-blue-600 text-white p-4 shadow-md sticky top-0 z-30 flex justify-between items-center">
+        <h1 class="text-xl font-bold flex items-center gap-2">
+            <span>👨‍🏫</span> السنتر الذكي
+        </h1>
+        <span class="text-xs bg-blue-800 px-2 py-1 rounded-full font-bold">نسخة فائقة السرعة</span>
+    </header>
+
+    <!-- Main Container -->
+    <main class="max-w-md mx-auto p-4 pb-24">
+
+        <!-- VIEW 1: HOME -->
+        <div id="view-home" class="space-y-4">
+            <div class="grid grid-cols-2 gap-4">
+                <button onclick="openRecords('attendance')" class="p-5 bg-blue-50 border border-blue-200 rounded-2xl shadow-sm text-center hover:bg-blue-100 transition">
+                    <div class="text-3xl mb-1">📅</div>
+                    <div class="font-bold text-blue-900">أخذ الغياب</div>
+                </button>
+                <button onclick="openRecords('homework')" class="p-5 bg-purple-50 border border-purple-200 rounded-2xl shadow-sm text-center hover:bg-purple-100 transition">
+                    <div class="text-3xl mb-1">📝</div>
+                    <div class="font-bold text-purple-900">الواجبات</div>
+                </button>
+                <button onclick="openRecords('exam')" class="p-5 bg-orange-50 border border-orange-200 rounded-2xl shadow-sm text-center hover:bg-orange-100 transition">
+                    <div class="text-3xl mb-1">💯</div>
+                    <div class="font-bold text-orange-900">الامتحانات</div>
+                </button>
+                <button onclick="openRecords('payment')" class="p-5 bg-green-50 border border-green-200 rounded-2xl shadow-sm text-center hover:bg-green-100 transition">
+                    <div class="text-3xl mb-1">💰</div>
+                    <div class="font-bold text-green-900">المصاريف</div>
+                </button>
+            </div>
+
+            <button onclick="openReports()" class="w-full p-4 bg-indigo-600 text-white rounded-2xl shadow-md font-bold text-lg flex justify-center items-center gap-2 hover:bg-indigo-700 transition">
+                <span>📊</span> التقارير الشهرية الاحترافية
+            </button>
+
+            <button onclick="openStudents()" class="w-full p-4 bg-slate-800 text-white rounded-2xl shadow-md font-bold text-lg flex justify-center items-center gap-2 hover:bg-slate-900 transition">
+                <span>👥</span> إدارة قاعدة الطلاب
+            </button>
+
+            <!-- Backup Section -->
+            <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm mt-4">
+                <h3 class="font-bold text-slate-700 mb-2 flex items-center gap-1">💾 حماية البيانات (نسخ واستعادة)</h3>
+                <div class="flex gap-2">
+                    <button onclick="exportData()" class="flex-1 bg-slate-700 text-white py-2.5 rounded-xl font-bold text-sm">حفظ نسخة</button>
+                    <label class="flex-1 bg-slate-200 text-slate-800 py-2.5 rounded-xl font-bold text-sm text-center cursor-pointer">
+                        استعادة نسخة
+                        <input type="file" accept=".json" class="hidden" onchange="importData(event)">
+                    </label>
+                </div>
+            </div>
+        </div>
+
+        <!-- VIEW 2: STUDENTS MANAGEMENT -->
+        <div id="view-students" class="hidden-view space-y-4">
+            <div class="flex justify-between items-center">
+                <button onclick="showView('home')" class="p-2 bg-slate-200 rounded-full font-bold">➡️ رجوع</button>
+                <h2 class="text-xl font-bold">قاعدة الطلاب</h2>
+            </div>
+
+            <button onclick="toggleAddStudentForm()" class="w-full py-3 bg-blue-600 text-white rounded-xl font-bold">+ إضافة طالب جديد</button>
+
+            <form id="add-student-form" onsubmit="saveStudent(event)" class="hidden-view bg-white p-4 rounded-2xl border shadow-md space-y-3">
+                <div>
+                    <label class="block text-xs font-bold mb-1">اسم الطالب *</label>
+                    <input type="text" id="st-name" required class="w-full p-2.5 border rounded-lg bg-slate-50">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold mb-1">المرحلة *</label>
+                    <select id="st-grade" class="w-full p-2.5 border rounded-lg bg-slate-50"></select>
+                </div>
+                <div class="grid grid-cols-2 gap-2">
+                    <div>
+                        <label class="block text-xs font-bold mb-1">رقم ولي الأمر *</label>
+                        <input type="tel" id="st-parent-phone" required dir="ltr" class="w-full p-2.5 border rounded-lg bg-slate-50 text-left">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold mb-1">رقم الطالب</label>
+                        <input type="tel" id="st-phone" dir="ltr" class="w-full p-2.5 border rounded-lg bg-slate-50 text-left">
+                    </div>
+                </div>
+                <button type="submit" class="w-full py-2.5 bg-green-600 text-white font-bold rounded-lg">حفظ الطالب</button>
+            </form>
+
+            <div id="students-list" class="space-y-2"></div>
+        </div>
+
+        <!-- VIEW 3: RECORDS -->
+        <div id="view-records" class="hidden-view space-y-4">
+            <div class="flex justify-between items-center">
+                <button onclick="showView('home')" class="p-2 bg-slate-200 rounded-full font-bold">➡️ رجوع</button>
+                <h2 id="records-title" class="text-xl font-bold">تسجيل السجلات</h2>
+            </div>
+
+            <!-- Grade Selection Stage -->
+            <div id="grade-selector-records" class="space-y-2"></div>
+
+            <!-- Active Recording List -->
+            <div id="records-active-container" class="hidden-view space-y-3">
+                <div class="bg-blue-50 border border-blue-200 p-3 rounded-xl font-bold flex justify-between items-center">
+                    <span id="selected-grade-label" class="text-blue-900"></span>
+                    <span id="today-date-label" class="text-xs text-blue-700" dir="ltr"></span>
+                </div>
+                <div id="records-students-list" class="space-y-3"></div>
+            </div>
+        </div>
+
+        <!-- VIEW 4: REPORTS -->
+        <div id="view-reports" class="hidden-view space-y-4">
+            <div class="flex justify-between items-center">
+                <button onclick="showView('home')" class="p-2 bg-slate-200 rounded-full font-bold">➡️ رجوع</button>
+                <h2 class="text-xl font-bold text-indigo-900">التقارير الشهرية</h2>
+            </div>
+
+            <div id="grade-selector-reports" class="space-y-2"></div>
+
+            <div id="reports-active-container" class="hidden-view space-y-3">
+                <div class="bg-indigo-50 border border-indigo-200 p-3 rounded-xl space-y-2">
+                    <div id="report-grade-label" class="font-bold text-indigo-900"></div>
+                    <div>
+                        <label class="text-xs font-bold text-indigo-700 block mb-1">اختر الشهر:</label>
+                        <input type="month" id="report-month-input" onchange="renderReportsList()" class="w-full p-2 border rounded-lg text-center font-bold">
+                    </div>
+                </div>
+                <div id="reports-students-list" class="space-y-3"></div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- REPORT MODAL -->
+    <div id="report-modal" class="hidden-view fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-3xl p-5 w-full max-w-md space-y-3 relative flex flex-col max-h-[90vh]">
+            <button onclick="closeReportModal()" class="absolute top-4 left-4 p-1.5 bg-slate-100 rounded-full font-bold text-slate-500">✕</button>
+            <h3 class="text-lg font-bold text-indigo-900">📄 التقرير الشهري جاهز</h3>
+            <textarea id="report-text-area" class="w-full flex-1 min-h-[280px] p-3 border rounded-xl bg-slate-50 text-sm leading-relaxed focus:outline-none"></textarea>
+            <button id="send-whatsapp-btn" class="w-full py-3 bg-[#25D366] text-white font-bold rounded-xl text-lg shadow-md flex justify-center items-center gap-2">
+                إرسال عبر واتساب
+            </button>
+        </div>
+    </div>
+
+    <!-- JAVASCRIPT LOGIC (VANILLA JS - NO FRAMEWORKS - ULTRA FAST) -->
+    <script>
+        const GRADES = ['2 إعدادي', '3 إعدادي', '1 ثانوي', '2 ثانوي', '3 ثانوي علمي', '3 ثانوي أدبي'];
+
+        // App State
+        let students = JSON.parse(localStorage.getItem('center_students_v3') || '[]');
+        let records = JSON.parse(localStorage.getItem('center_records_v3') || '[]');
+        
+        let currentRecordAction = null; // 'attendance', 'homework', 'exam', 'payment'
+        let currentSelectedGrade = '';
+        let currentReportStudent = null;
+
+        // Date Helper
+        function getTodayDate() {
+            const d = new Date();
+            return [d.getFullYear(), String(d.getMonth() + 1).padStart(2, '0'), String(d.getDate()).padStart(2, '0')].join('-');
+        }
+
+        function getCurrentMonth() {
+            const d = new Date();
+            return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
+        }
+
+        // Init App
+        document.addEventListener('DOMContentLoaded', () => {
+            initGradeSelectors();
+            document.getElementById('report-month-input').value = getCurrentMonth();
+        });
+
+        function saveToStorage() {
+            localStorage.setItem('center_students_v3', JSON.stringify(students));
+            localStorage.setItem('center_records_v3', JSON.stringify(records));
+        }
+
+        // View Navigation
+        function showView(viewId) {
+            ['home', 'students', 'records', 'reports'].forEach(v => {
+                document.getElementById(`view-${v}`).classList.add('hidden-view');
+            });
+            document.getElementById(`view-${viewId}`).classList.remove('hidden-view');
+        }
+
+        function openStudents() {
+            showView('students');
+            renderStudentsList();
+        }
+
+        function openRecords(action) {
+            currentRecordAction = action;
+            currentSelectedGrade = '';
+            showView('records');
+            
+            const titles = {
+                attendance: '📋 أخذ الغياب',
+                homework: '📝 تسجيل الواجبات',
+                exam: '💯 درجات الامتحانات',
+                payment: '💰 تحصيل المصاريف'
+            };
+            document.getElementById('records-title').innerText = titles[action];
+            
+            document.getElementById('grade-selector-records').classList.remove('hidden-view');
+            document.getElementById('records-active-container').classList.add('hidden-view');
+            renderGradeButtons('records', selectRecordGrade);
+        }
+
+        function openReports() {
+            currentSelectedGrade = '';
+            showView('reports');
+            document.getElementById('grade-selector-reports').classList.remove('hidden-view');
+            document.getElementById('reports-active-container').classList.add('hidden-view');
+            renderGradeButtons('reports', selectReportGrade);
+        }
+
+        // Grade Selectors Render
+        function initGradeSelectors() {
+            const selectEl = document.getElementById('st-grade');
+            selectEl.innerHTML = GRADES.map(g => `<option value="${g}">${g}</option>`).join('');
+        }
+
+        function renderGradeButtons(type, onClickFn) {
+            const container = document.getElementById(`grade-selector-${type}`);
+            container.innerHTML = GRADES.map(g => {
+                const count = students.filter(s => s.grade === g).length;
+                return `
+                    <button onclick="${onClickFn.name}('${g}')" class="w-full p-4 bg-white border rounded-2xl shadow-sm font-bold text-lg flex justify-between items-center hover:border-blue-500">
+                        <span>${g}</span>
+                        <span class="text-xs bg-blue-100 text-blue-800 px-3 py-1 rounded-full">${count} طلاب</span>
+                    </button>
+                `;
+            }).join('');
+        }
+
+        // Students Logic
+        function toggleAddStudentForm() {
+            document.getElementById('add-student-form').classList.toggle('hidden-view');
+        }
+
+        function saveStudent(e) {
+            e.preventDefault();
+            const name = document.getElementById('st-name').value.trim();
+            const grade = document.getElementById('st-grade').value;
+            const parentPhone = document.getElementById('st-parent-phone').value.trim();
+            const studentPhone = document.getElementById('st-phone').value.trim();
+
+            const newStudent = { id: Date.now().toString(), name, grade, parentPhone, studentPhone: studentPhone || 'غير مسجل' };
+            students.push(newStudent);
+            saveToStorage();
+
+            document.getElementById('st-name').value = '';
+            document.getElementById('st-parent-phone').value = '';
+            document.getElementById('st-phone').value = '';
+            toggleAddStudentForm();
+            renderStudentsList();
+            alert('✅ تم حفظ الطالب بنجاح!');
+        }
+
+        function deleteStudent(id) {
+            if (confirm('هل أنت متأكد من حذف هذا الطالب نهائياً؟')) {
+                students = students.filter(s => s.id !== id);
+                records = records.filter(r => r.studentId !== id);
+                saveToStorage();
+                renderStudentsList();
+            }
+        }
+
+        function renderStudentsList() {
+            const container = document.getElementById('students-list');
+            if (students.length === 0) {
+                container.innerHTML = `<p class="text-center text-slate-400 py-6">لا يوجد طلاب مسجلين.</p>`;
+                return;
+            }
+            container.innerHTML = students.map(s => `
+                <div class="bg-white p-4 rounded-2xl border shadow-sm flex justify-between items-center">
+                    <div>
+                        <div class="font-bold text-base">${s.name}</div>
+                        <div class="text-xs text-slate-500 mt-1 flex gap-2">
+                            <span class="bg-blue-50 text-blue-700 px-2 py-0.5 rounded font-bold">${s.grade}</span>
+                            <span dir="ltr">${s.parentPhone}</span>
+                        </div>
+                    </div>
+                    <button onclick="deleteStudent('${s.id}')" class="text-red-500 bg-red-50 p-2 rounded-full text-xs font-bold">حذف</button>
+                </div>
+            `).join('');
+        }
+
+        // Records Logic
+        function selectRecordGrade(grade) {
+            currentSelectedGrade = grade;
+            document.getElementById('grade-selector-records').classList.add('hidden-view');
+            document.getElementById('records-active-container').classList.remove('hidden-view');
+            document.getElementById('selected-grade-label').innerText = `المجموعة: ${grade}`;
+            document.getElementById('today-date-label').innerText = getTodayDate();
+            renderRecordsList();
+        }
+
+        function updateRecord(studentId, field, value, maxScore = null) {
+            const today = getTodayDate();
+            let rec = records.find(r => r.studentId === studentId && r.date === today);
+            if (rec) {
+                rec[field] = value;
+                if (maxScore !== null) rec.maxScore = maxScore;
+            } else {
+                rec = {
+                    id: Date.now().toString(),
+                    studentId,
+                    date: today,
+                    attendance: field === 'attendance' ? value : 'غير مسجل',
+                    homework: field === 'homework' ? value : 'غير مسجل',
+                    examScore: field === 'examScore' ? value : 'غير مسجل',
+                    maxScore: maxScore !== null ? maxScore : 'غير مسجل',
+                    payment: field === 'payment' ? value : 'غير مسجل'
+                };
+                records.push(rec);
+            }
+            saveToStorage();
+            renderRecordsList();
+        }
+
+        function renderRecordsList() {
+            const container = document.getElementById('records-students-list');
+            const filtered = students.filter(s => s.grade === currentSelectedGrade);
+            const today = getTodayDate();
+
+            if (filtered.length === 0) {
+                container.innerHTML = `<p class="text-center text-slate-400 py-6">لا يوجد طلاب في هذه المجموعة.</p>`;
+                return;
+            }
+
+            container.innerHTML = filtered.map(s => {
+                const rec = records.find(r => r.studentId === s.id && r.date === today) || {
+                    attendance: 'غير مسجل', homework: 'غير مسجل', examScore: 'غير مسجل', maxScore: 'غير مسجل', payment: 'غير مسجل'
+                };
+
+                let actionControl = '';
+                if (currentRecordAction === 'attendance') {
+                    actionControl = `
+                        <div class="flex gap-2 mt-2">
+                            <button onclick="updateRecord('${s.id}', 'attendance', 'حاضر')" class="flex-1 py-2.5 rounded-xl font-bold ${rec.attendance === 'حاضر' ? 'bg-green-600 text-white' : 'bg-slate-100 text-slate-600'}">حاضر</button>
+                            <button onclick="updateRecord('${s.id}', 'attendance', 'غائب')" class="flex-1 py-2.5 rounded-xl font-bold ${rec.attendance === 'غائب' ? 'bg-red-600 text-white' : 'bg-slate-100 text-slate-600'}">غائب</button>
+                        </div>
+                    `;
+                } else if (currentRecordAction === 'homework') {
+                    actionControl = `
+                        <div class="flex gap-2 mt-2">
+                            <button onclick="updateRecord('${s.id}', 'homework', 'تم')" class="flex-1 py-2.5 rounded-xl font-bold ${rec.homework === 'تم' ? 'bg-blue-600 text-white' : 'bg-slate-100 text-slate-600'}">تم الحل</button>
+                            <button onclick="updateRecord('${s.id}', 'homework', 'لم يتم')" class="flex-1 py-2.5 rounded-xl font-bold ${rec.homework === 'لم يتم' ? 'bg-orange-600 text-white' : 'bg-slate-100 text-slate-600'}">لم يحل</button>
+                        </div>
+                    `;
+                } else if (currentRecordAction === 'payment') {
+                    actionControl = `
+                        <div class="flex gap-2 mt-2">
+                            <button onclick="updateRecord('${s.id}', 'payment', 'مدفوع')" class="flex-1 py-2.5 rounded-xl font-bold ${rec.payment === 'مدفوع' ? 'bg-green-600 text-white' : 'bg-slate-100 text-slate-600'}">تم الدفع</button>
+                            <button onclick="updateRecord('${s.id}', 'payment', 'غير مدفوع')" class="flex-1 py-2.5 rounded-xl font-bold ${rec.payment === 'غير مدفوع' ? 'bg-red-600 text-white' : 'bg-slate-100 text-slate-600'}">لم يدفع</button>
+                        </div>
+                    `;
+                } else if (currentRecordAction === 'exam') {
+                    actionControl = `
+                        <div class="mt-2 bg-slate-50 p-2 rounded-xl flex items-center justify-between border">
+                            <span class="font-bold text-sm text-slate-700">${rec.examScore !== 'غير مسجل' ? `${rec.examScore} / ${rec.maxScore}` : 'لم تسجل'}</span>
+                            <button onclick="promptExamScore('${s.id}', '${rec.examScore !== 'غير مسجل' ? rec.examScore : ''}', '${rec.maxScore !== 'غير مسجل' ? rec.maxScore : ''}')" class="bg-orange-100 text-orange-900 px-4 py-1.5 rounded-lg text-xs font-bold">إدخال / تعديل</button>
+                        </div>
+                    `;
+                }
+
+                return `
+                    <div class="bg-white p-4 rounded-2xl border shadow-sm">
+                        <div class="font-bold text-base text-slate-800">${s.name}</div>
+                        ${actionControl}
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function promptExamScore(studentId, defaultScore, defaultMax) {
+            const score = prompt('أدخل درجة الطالب:', defaultScore);
+            if (score === null || score === '') return;
+            const maxScore = prompt('أدخل الدرجة النهائية للامتحان:', defaultMax || '20');
+            if (maxScore === null || maxScore === '') return;
+
+            if (isNaN(score) || isNaN(maxScore) || parseFloat(score) > parseFloat(maxScore)) {
+                alert('❌ أرقام غير صحيحة!');
+                return;
+            }
+            updateRecord(studentId, 'examScore', score, maxScore);
+        }
+
+        // Reports Logic
+        function selectReportGrade(grade) {
+            currentSelectedGrade = grade;
+            document.getElementById('grade-selector-reports').classList.add('hidden-view');
+            document.getElementById('reports-active-container').classList.remove('hidden-view');
+            document.getElementById('report-grade-label').innerText = `المجموعة: ${grade}`;
+            renderReportsList();
+        }
+
+        function renderReportsList() {
+            const container = document.getElementById('reports-students-list');
+            const filtered = students.filter(s => s.grade === currentSelectedGrade);
+
+            if (filtered.length === 0) {
+                container.innerHTML = `<p class="text-center text-slate-400 py-6">لا يوجد طلاب في هذه المجموعة.</p>`;
+                return;
+            }
+
+            container.innerHTML = filtered.map(s => `
+                <div class="bg-white p-4 rounded-2xl border shadow-sm flex justify-between items-center">
+                    <span class="font-bold">${s.name}</span>
+                    <button onclick="generateReport('${s.id}')" class="bg-indigo-600 text-white px-4 py-2 rounded-xl text-xs font-bold">إصدار التقرير 📄</button>
+                </div>
+            `).join('');
+        }
+
+        function generateReport(studentId) {
+            const student = students.find(s => s.id === studentId);
+            if (!student) return;
+            currentReportStudent = student;
+
+            const selectedMonth = document.getElementById('report-month-input').value;
+            const monthRecords = records.filter(r => r.studentId === studentId && r.date.startsWith(selectedMonth));
+
+            const attended = monthRecords.filter(r => r.attendance === 'حاضر').length;
+            const absent = monthRecords.filter(r => r.attendance === 'غائب').length;
+            const totalSessions = attended + absent;
+
+            const hwDone = monthRecords.filter(r => r.homework === 'تم').length;
+            const hwMissed = monthRecords.filter(r => r.homework === 'لم يتم').length;
+
+            const studentExams = monthRecords.filter(r => r.examScore !== 'غير مسجل');
+            const examsFormatted = studentExams.map(r => `${r.examScore}/${r.maxScore}`);
+            const isPaid = monthRecords.some(r => r.payment === 'مدفوع');
+
+            // Average comparison
+            const groupStudentsIds = students.filter(s => s.grade === student.grade).map(s => s.id);
+            const groupExams = records.filter(r => r.date.startsWith(selectedMonth) && groupStudentsIds.includes(r.studentId) && r.examScore !== 'غير مسجل');
+
+            let groupTotalPerc = 0;
+            groupExams.forEach(r => { groupTotalPerc += (parseFloat(r.examScore) / parseFloat(r.maxScore)) * 100; });
+            const groupAvg = groupExams.length > 0 ? groupTotalPerc / groupExams.length : 0;
+
+            let stTotalPerc = 0;
+            studentExams.forEach(r => { stTotalPerc += (parseFloat(r.examScore) / parseFloat(r.maxScore)) * 100; });
+            const stAvg = studentExams.length > 0 ? stTotalPerc / studentExams.length : 0;
+
+            let compText = "";
+            if (studentExams.length > 0 && groupExams.length > studentExams.length) {
+                if (stAvg >= groupAvg + 5) compText = "- المستوى الأكاديمي: أعلى من متوسط المجموعة 🌟\n\n";
+                else if (stAvg <= groupAvg - 5) compText = "- المستوى الأكاديمي: أقل من متوسط المجموعة (ونرجو المتابعة لزيادة التركيز) ⚠️\n\n";
+                else compText = "- المستوى الأكاديمي: يوازي متوسط المجموعة 📊\n\n";
+            }
+
+            const [year, month] = selectedMonth.split('-');
+
+            let report = `📄 التقرير الأكاديمي لشهر ${month}/${year}\n`;
+            report += `الطالب/ة: ${student.name} 🎓\n\n`;
+            report += `السادة أولياء الأمور الأفاضل، تحية طيبة وبعد،\n`;
+            report += `نُثمن عالياً جهودكم المبذولة وحرصكم الدائم على متابعة أبنائكم، ونقدر سعي الطالب المستمر للتعلم. نضع بين أيديكم التقرير الشهري لمستوى الطالب في مادة الرياضيات، ونؤكد أن الالتزام المستمر هو الركيزة الأساسية للتفوق، ونعول على متابعتكم الحازمة في هذا الشأن:\n\n`;
+
+            report += `📊 الحضور والغياب:\n`;
+            report += `- إجمالي الحصص: ${totalSessions} حصص\n`;
+            report += `- الحضور: ${attended} حصة\n`;
+            report += `- الغياب: ${absent} حصة (نرجو التشديد على عدم الغياب لأهمية تسلسل الأفكار في الحصص)\n\n`;
+
+            report += `📝 الواجبات والمتابعة:\n`;
+            report += `- إتمام الواجبات: ${hwDone} مرة\n`;
+            report += `- تقصير في الواجبات: ${hwMissed} مرة (الواجب هو التطبيق العملي ونرجو المتابعة الحازمة لإتمامه)\n\n`;
+
+            report += `💯 التقييمات والامتحانات:\n`;
+            if (examsFormatted.length > 0) {
+                report += `- درجات الامتحانات هذا الشهر: (${examsFormatted.join(') ، (')})\n`;
+                report += compText;
+            } else {
+                report += `- لم يتم تسجيل درجات امتحانات هذا الشهر.\n\n`;
+            }
+
+            report += `💰 الشؤون المالية:\n`;
+            if (isPaid) {
+                report += `- الجانب المالي: نتقدم بخالص الشكر والتقدير لالتزامكم الراقي بسداد المصروفات في موعدها، مما يعكس حرصكم ويدعم استقرار العملية التعليمية.\n\n`;
+            } else {
+                report += `- الجانب المالي: نرجو من سيادتكم التكرم وتوجيه الاهتمام لسداد مصروفات الشهر الحالي في أقرب وقت ممكن، حيث أن الالتزام بالمواعيد المحددة يضمن استمرارية تقديم الخدمة التعليمية بأعلى جودة لنجلكم.\n\n`;
+            }
+
+            report += `ختاماً، نحن شركاء في هذا النجاح، ونتمنى للطالب دوام التميز.\nمع خالص التقدير والتحيات،\nأ. مصطفى شلبي - مدرس الرياضيات 👨‍🏫`;
+
+            document.getElementById('report-text-area').value = report;
+            document.getElementById('send-whatsapp-btn').onclick = () => sendWhatsApp(student.parentPhone, report);
+            document.getElementById('report-modal').classList.remove('hidden-view');
+        }
+
+        function closeReportModal() {
+            document.getElementById('report-modal').classList.add('hidden-view');
+        }
+
+        function sendWhatsApp(phone, text) {
+            let p = phone.trim();
+            if (p.startsWith('0')) p = '+20' + p.substring(1);
+            p = p.replace(/[^\d+]/g, '');
+            window.open(`https://wa.me/${p}?text=${encodeURIComponent(text)}`, '_blank');
+        }
+
+        // Backup / Restore
+        function exportData() {
+            const dataStr = JSON.stringify({ students, records });
+            const blob = new Blob([dataStr], { type: "application/json" });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `center_backup_${getTodayDate()}.json`;
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+
+        function importData(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+            if (confirm("تحذير: استعادة النسخة الاحتياطية ستقوم بمسح البيانات الحالية. هل تريد الاستمرار؟")) {
+                const reader = new FileReader();
+                reader.onload = (event) => {
+                    try {
+                        const data = JSON.parse(event.target.result);
+                        if (data.students && data.records) {
+                            students = data.students;
+                            records = data.records;
+                            saveToStorage();
+                            alert("✅ تم استعادة البيانات بنجاح!");
+                            location.reload();
+                        } else {
+                            alert("❌ ملف غير صالح!");
+                        }
+                    } catch (err) {
+                        alert("❌ خطأ في القراءة!");
+                    }
+                };
+                reader.readAsText(file);
+            }
+            e.target.value = '';
+        }
+    </script>
+</body>
+</html>
